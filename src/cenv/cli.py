@@ -72,3 +72,47 @@ def use(name: str, force: bool):
     except RuntimeError as e:
         click.echo(f"Error: {e}", err=True)
         raise SystemExit(1)
+
+@cli.command()
+def list():
+    """List all environments"""
+    envs = list_environments()
+    current = get_current_environment()
+
+    if not envs:
+        click.echo("No environments found.")
+        click.echo("Run 'cenv init' to initialize.")
+        return
+
+    click.echo("Available environments:")
+    for env in sorted(envs):
+        marker = " → " if env == current else "   "
+        click.echo(f"{marker}{env}")
+
+@cli.command()
+def current():
+    """Show the currently active environment"""
+    current_env = get_current_environment()
+
+    if current_env is None:
+        click.echo("No active environment.")
+        click.echo("Run 'cenv init' to initialize.")
+    else:
+        click.echo(current_env)
+
+@cli.command()
+@click.argument("name")
+@click.option("--force", "-f", is_flag=True, help="Skip confirmation prompt")
+def delete(name: str, force: bool):
+    """Delete an environment"""
+    try:
+        if not force:
+            if not click.confirm(f"Delete environment '{name}'?"):
+                click.echo("Cancelled.")
+                return
+
+        delete_environment(name)
+        click.echo(f"✓ Deleted environment '{name}'")
+    except RuntimeError as e:
+        click.echo(f"Error: {e}", err=True)
+        raise SystemExit(1)
