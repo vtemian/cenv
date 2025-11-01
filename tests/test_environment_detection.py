@@ -1,6 +1,5 @@
 from pathlib import Path
 from cenv.core import list_environments, get_current_environment, environment_exists
-import tempfile
 import pytest
 
 @pytest.fixture
