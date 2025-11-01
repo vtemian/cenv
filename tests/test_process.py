@@ -1,0 +1,46 @@
+# ABOUTME: Tests for Claude process detection functionality
+# ABOUTME: Verifies is_claude_running() and get_claude_processes() work correctly
+import pytest
+from unittest.mock import Mock, patch
+from cenv.process import is_claude_running, get_claude_processes
+
+def test_is_claude_running_returns_false_when_no_processes():
+    """Test returns False when no Claude processes found"""
+    with patch("cenv.process.get_claude_processes", return_value=[]):
+        result = is_claude_running()
+        assert result is False
+
+def test_is_claude_running_returns_true_when_processes_exist():
+    """Test returns True when Claude processes found"""
+    mock_process = Mock()
+    with patch("cenv.process.get_claude_processes", return_value=[mock_process]):
+        result = is_claude_running()
+        assert result is True
+
+def test_get_claude_processes_finds_claude_node_processes():
+    """Test that get_claude_processes finds node processes running claude"""
+    mock_proc1 = Mock()
+    mock_proc1.info = {"pid": 123, "name": "node", "cmdline": ["/usr/bin/node", "/path/to/bin/claude"]}
+
+    mock_proc2 = Mock()
+    mock_proc2.info = {"pid": 456, "name": "python", "cmdline": ["python", "script.py"]}
+
+    mock_proc3 = Mock()
+    mock_proc3.info = {"pid": 789, "name": "node", "cmdline": ["/usr/bin/node", "/path/to/other"]}
+
+    with patch("psutil.process_iter", return_value=[mock_proc1, mock_proc2, mock_proc3]):
+        result = get_claude_processes()
+        assert len(result) == 1
+        assert result[0].info["pid"] == 123
+
+def test_get_claude_processes_handles_access_denied():
+    """Test that process iteration handles access denied errors"""
+    import psutil
+    from unittest.mock import PropertyMock
+
+    mock_proc = Mock()
+    type(mock_proc).info = PropertyMock(side_effect=psutil.AccessDenied())
+
+    with patch("psutil.process_iter", return_value=[mock_proc]):
+        result = get_claude_processes()
+        assert result == []
