@@ -24,7 +24,15 @@ def test_is_valid_github_url_rejects_invalid():
 @patch("subprocess.run")
 def test_clone_from_github_calls_git_clone(mock_run):
     """Test that clone_from_github calls git clone"""
-    mock_run.return_value = MagicMock(returncode=0)
+    def simulate_git_clone(cmd, **kwargs):
+        # Simulate git clone creating the temp directory
+        if cmd[0] == "git" and cmd[1] == "clone":
+            temp_dir = Path(cmd[3])
+            temp_dir.mkdir(parents=True)
+            (temp_dir / ".git").mkdir()
+        return MagicMock(returncode=0)
+
+    mock_run.side_effect = simulate_git_clone
 
     with tempfile.TemporaryDirectory() as tmpdir:
         target = Path(tmpdir) / "test-env"
@@ -49,16 +57,22 @@ def test_clone_from_github_raises_on_git_error(mock_run):
 @patch("subprocess.run")
 def test_clone_from_github_removes_git_directory(mock_run):
     """Test that clone removes .git directory after cloning"""
-    mock_run.return_value = MagicMock(returncode=0)
+    def simulate_git_clone(cmd, **kwargs):
+        # Simulate git clone creating the temp directory with .git
+        if cmd[0] == "git" and cmd[1] == "clone":
+            temp_dir = Path(cmd[3])
+            temp_dir.mkdir(parents=True)
+            git_dir = temp_dir / ".git"
+            git_dir.mkdir()
+        return MagicMock(returncode=0)
+
+    mock_run.side_effect = simulate_git_clone
 
     with tempfile.TemporaryDirectory() as tmpdir:
         target = Path(tmpdir) / "test-env"
-        target.mkdir()
-        git_dir = target / ".git"
-        git_dir.mkdir()
+        clone_from_github("https://github.com/user/repo", target)
 
-        with patch("cenv.github.Path.exists", return_value=True):
-            with patch("shutil.rmtree") as mock_rmtree:
-                clone_from_github("https://github.com/user/repo", target)
-                # Check that rmtree was called (for .git directory)
-                assert mock_rmtree.called
+        # Verify .git directory was removed
+        assert not (target / ".git").exists()
+        # Verify target directory was created
+        assert target.exists()
