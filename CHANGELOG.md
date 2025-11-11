@@ -2,6 +2,30 @@
 
 All notable changes to cenv will be documented in this file.
 
+## [0.2.0] - 2025-11-11
+
+### Added
+- Custom exception hierarchy for better error handling and debugging
+- Comprehensive logging infrastructure with file and console handlers
+- CLI options: `--verbose` for detailed output, `--log-file` for persistent logs
+- Trash mechanism with restore functionality for deleted environments
+- `cenv trash` command to list deleted environments
+- `cenv restore` command to recover environments from trash
+- File locking to prevent race conditions during initialization
+- Security documentation in docs/SECURITY.md
+- Type checking with mypy in strict mode
+
+### Security
+- Git clone operations now have 5-minute timeout to prevent hanging
+- Shallow clones (`--depth 1`) to minimize data transfer
+- Custom GitOperationError for invalid GitHub URLs
+- Atomic file operations with file locks
+
+### Changed
+- Replaced generic RuntimeError/ValueError with custom exceptions
+- Enhanced error messages with specific exception types
+- Updated documentation with security considerations
+
 ## [0.1.0] - 2025-11-01
 
 ### Added

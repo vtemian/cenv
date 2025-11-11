@@ -28,4 +28,7 @@
 
 ## Reporting Security Issues
 
-Please report security vulnerabilities to [maintainer email]
+Please report security vulnerabilities by opening a GitHub issue at:
+https://github.com/yourusername/cenv/issues
+
+For sensitive security issues that should not be disclosed publicly, please use GitHub's private vulnerability reporting feature if available, or contact the maintainers directly through GitHub.
