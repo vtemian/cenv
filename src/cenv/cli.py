@@ -1,6 +1,8 @@
 # ABOUTME: CLI interface for cenv using Click framework
 # ABOUTME: Provides commands for init, create, use, list, current, and delete
 import click
+import logging
+from pathlib import Path
 from cenv.core import (
     init_environments,
     create_environment,
@@ -10,15 +12,28 @@ from cenv.core import (
     get_current_environment,
 )
 from cenv.process import is_claude_running
+from cenv.logging_config import setup_logging
+
 
 @click.group()
 @click.version_option()
-def cli():
+@click.option(
+    "--verbose", "-v",
+    is_flag=True,
+    help="Enable verbose logging"
+)
+@click.option(
+    "--log-file",
+    type=click.Path(path_type=Path),
+    help="Write logs to file"
+)
+def cli(verbose: bool, log_file: Path):
     """cenv - Claude environment manager
 
     Manage isolated Claude Code configurations like pyenv manages Python versions.
     """
-    pass
+    level = logging.DEBUG if verbose else logging.INFO
+    setup_logging(level=level, log_file=log_file)
 
 @cli.command()
 def init():
