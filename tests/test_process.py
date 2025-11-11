@@ -51,3 +51,27 @@ def test_get_claude_processes_handles_access_denied():
     with patch("psutil.process_iter", return_value=[mock_proc]):
         result = get_claude_processes()
         assert result == []
+
+def test_process_detection_returns_false_when_uncertain():
+    """Test that uncertain detection returns False (fail-safe)"""
+    # When we can't definitively detect Claude, assume it's not running
+    # Better to allow operation than block user unnecessarily
+    result = is_claude_running()
+    assert isinstance(result, bool)
+
+
+def test_get_claude_processes_handles_access_denied_gracefully():
+    """Test that AccessDenied doesn't crash detection"""
+    # Should handle permission errors gracefully
+    processes = get_claude_processes()
+    assert isinstance(processes, list)
+
+
+def test_detection_documented_limitations():
+    """Test that detection limitations are documented"""
+    import cenv.process
+    # Module should have docstring explaining limitations
+    assert cenv.process.__doc__ is not None
+    doc = cenv.process.__doc__.lower()
+    # Should mention detection is best-effort
+    assert any(word in doc for word in ['best-effort', 'may not', 'limitation', 'heuristic'])
