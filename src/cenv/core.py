@@ -12,6 +12,7 @@ from cenv.exceptions import (
     EnvironmentExistsError,
     ClaudeRunningError,
     InitializationError,
+    GitOperationError,
 )
 
 logger = get_logger(__name__)
@@ -148,7 +149,7 @@ def create_environment(name: str, source: str = "default") -> None:
     if source.startswith("https://") or source.startswith("git@"):
         if not is_valid_github_url(source):
             logger.error(f"Invalid GitHub URL: {source}")
-            raise ValueError(f"Invalid GitHub URL: {source}")
+            raise GitOperationError("validation", source, "Invalid GitHub URL format")
 
         logger.info(f"Cloning from GitHub: {source}")
         clone_from_github(source, target_env)

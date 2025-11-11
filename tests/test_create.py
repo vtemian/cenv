@@ -1,7 +1,7 @@
 import pytest
 from pathlib import Path
 from cenv.core import create_environment
-from cenv.exceptions import EnvironmentExistsError, InitializationError, EnvironmentNotFoundError
+from cenv.exceptions import EnvironmentExistsError, InitializationError, EnvironmentNotFoundError, GitOperationError
 from unittest.mock import patch
 
 @pytest.fixture
@@ -70,5 +70,5 @@ def test_create_environment_from_github_url(initialized_envs):
 def test_create_environment_validates_github_url(initialized_envs):
     """Test that invalid GitHub URL raises error"""
     with patch("cenv.core.is_valid_github_url", return_value=False):
-        with pytest.raises(ValueError, match="Invalid GitHub URL"):
+        with pytest.raises(GitOperationError, match="Invalid GitHub URL format"):
             create_environment("work", source="https://not-a-valid-github-url.com")
