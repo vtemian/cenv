@@ -4,6 +4,10 @@ import subprocess
 import shutil
 from pathlib import Path
 import re
+from cenv.exceptions import GitOperationError
+
+# Security: 5 minute timeout for git operations
+GIT_TIMEOUT = 300
 
 def is_valid_github_url(url: str) -> bool:
     """Validate if URL is a valid GitHub repository URL"""
@@ -15,24 +19,33 @@ def is_valid_github_url(url: str) -> bool:
     return any(re.match(pattern, url) for pattern in patterns)
 
 def clone_from_github(url: str, target: Path) -> None:
-    """Clone a GitHub repository to target directory"""
+    """Clone a GitHub repository to target directory
+
+    Args:
+        url: GitHub repository URL
+        target: Target directory path
+
+    Raises:
+        GitOperationError: If clone fails or times out
+    """
     if not is_valid_github_url(url):
-        raise ValueError(f"Invalid GitHub URL: {url}")
+        raise GitOperationError("validation", url, "Invalid GitHub URL format")
 
     # Create temporary directory for cloning
     temp_dir = target.parent / f".tmp_{target.name}"
 
     try:
-        # Clone the repository
+        # Clone the repository with shallow clone and timeout
         result = subprocess.run(
-            ["git", "clone", url, str(temp_dir)],
+            ["git", "clone", "--depth", "1", url, str(temp_dir)],
             capture_output=True,
             text=True,
             check=False,
+            timeout=GIT_TIMEOUT,
         )
 
         if result.returncode != 0:
-            raise RuntimeError(f"Failed to clone repository: {result.stderr}")
+            raise GitOperationError("clone", url, result.stderr.strip())
 
         # Remove .git directory if it exists
         git_dir = temp_dir / ".git"
@@ -47,8 +60,15 @@ def clone_from_github(url: str, target: Path) -> None:
         if temp_dir.exists():
             shutil.move(str(temp_dir), str(target))
 
+    except subprocess.TimeoutExpired:
+        # Clean up temp directory
+        if temp_dir.exists():
+            shutil.rmtree(temp_dir)
+        raise GitOperationError("clone", url, f"Operation timed out after {GIT_TIMEOUT} seconds")
     except Exception as e:
         # Clean up temp directory if it exists
         if temp_dir.exists():
             shutil.rmtree(temp_dir)
-        raise
+        if isinstance(e, GitOperationError):
+            raise
+        raise GitOperationError("clone", url, str(e))
