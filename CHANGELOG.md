@@ -1,50 +1,42 @@
 # Changelog
 
-All notable changes to cenv will be documented in this file.
+All notable changes to this project will be documented in this file.
 
-## [0.2.0] - 2025-11-11
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
 
 ### Added
-- Custom exception hierarchy for better error handling and debugging
-- Comprehensive logging infrastructure with file and console handlers
-- CLI options: `--verbose` for detailed output, `--log-file` for persistent logs
-- Trash mechanism with restore functionality for deleted environments
-- `cenv trash` command to list deleted environments
-- `cenv restore` command to recover environments from trash
-- File locking to prevent race conditions during initialization
-- Security documentation in docs/SECURITY.md
-- Type checking with mypy in strict mode
+- Explicit `__all__` exports in all modules
+- Thread-safe configuration singleton
+- Exception handling tests
+
+### Fixed
+- MyPy strict mode type checking errors
+- Race condition in config singleton
+- Bare except clauses swallowing critical exceptions
+
+## [0.1.0] - 2025-11-11
+
+### Added
+- Initial release
+- Environment management commands: init, create, use, list, current, delete
+- GitHub repository cloning support
+- Trash/restore functionality
+- Platform compatibility checks
+- Input validation for security
+- Atomic environment switching operations
+- Thread-safe logging
+- Comprehensive test suite (122 tests, 91% coverage)
+- Configuration system (environment variables and config file)
 
 ### Security
-- Git clone operations now have 5-minute timeout to prevent hanging
-- Shallow clones (`--depth 1`) to minimize data transfer
-- Custom GitOperationError for invalid GitHub URLs
-- Atomic file operations with file locks
+- Path traversal prevention
+- Command injection prevention
+- Reserved name validation
+- Git operation timeouts
 
-### Changed
-- Replaced generic RuntimeError/ValueError with custom exceptions
-- Enhanced error messages with specific exception types
-- Updated documentation with security considerations
-
-## [0.1.0] - 2025-11-01
-
-### Added
-- Initial release of cenv
-- Environment initialization (`cenv init`)
-- Environment creation from default (`cenv create`)
-- Environment creation from GitHub repos (`cenv create --from-repo`)
-- Environment switching with safety checks (`cenv use`)
-- Environment listing (`cenv list`)
-- Current environment display (`cenv current`)
-- Environment deletion with protection (`cenv delete`)
-- Process detection for running Claude instances
-- Automatic confirmation prompts when Claude is running
-- Complete test coverage (unit + integration)
-- Comprehensive documentation
-
-### Features
-- Symlink-based environment switching for speed
-- Complete isolation between environments
-- Shared credentials via macOS Keychain
-- GitHub template support for team sharing
-- Safety checks to prevent accidental data loss
+<!-- Note: Replace 'yourusername' with actual GitHub organization/username -->
+[Unreleased]: https://github.com/yourusername/cenv/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/yourusername/cenv/releases/tag/v0.1.0
