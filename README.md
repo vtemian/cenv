@@ -188,7 +188,7 @@ cenv create work --from-repo https://github.com/company/claude-work-template
 - Git clone operations use shallow clones (`--depth 1`) and have a 5-minute timeout
 - All operations use custom exception types for better error handling
 - Comprehensive logging available with `--verbose` flag
-- See [SECURITY.md](docs/SECURITY.md) for security considerations
+- See [SECURITY.md](SECURITY.md) for security considerations
 
 ## Logging
 
