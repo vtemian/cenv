@@ -17,7 +17,6 @@ from cenv.core import (
 from cenv.process import is_claude_running
 from cenv.logging_config import setup_logging
 from cenv.exceptions import CenvError, EnvironmentNotFoundError, InitializationError
-from cenv.validation import InvalidEnvironmentNameError
 
 __all__ = ['cli']
 

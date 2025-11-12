@@ -19,8 +19,8 @@ from cenv.exceptions import (
     ActiveEnvironmentError,
     ProtectedEnvironmentError,
 )
-from cenv.platform_utils import check_platform_compatibility, PlatformNotSupportedError
-from cenv.validation import validate_environment_name, InvalidEnvironmentNameError
+from cenv.platform_utils import check_platform_compatibility
+from cenv.validation import validate_environment_name
 
 logger = get_logger(__name__)
 
