@@ -85,9 +85,12 @@ def load_config(config_file: Optional[Path] = None) -> Config:
                             pass  # Use default
                     elif key == 'log_level':
                         config.log_level = value.upper()
-        except Exception:
-            # If config file is malformed, use defaults
+        except (OSError, IOError, UnicodeDecodeError):
+            # If config file is malformed or unreadable, use defaults
+            # Note: We don't use logging here as logging config depends on this
             pass
+        # Note: KeyboardInterrupt, SystemExit, and other critical exceptions
+        # will propagate naturally
 
     # Environment variables override config file
     if 'CENV_GIT_TIMEOUT' in os.environ:

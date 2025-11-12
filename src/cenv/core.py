@@ -274,8 +274,10 @@ def init_environments() -> None:
                 fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
                 lock_file.close()
                 lock_file_path.unlink(missing_ok=True)
-            except Exception:
-                pass
+            except (OSError, IOError) as e:
+                # Best effort cleanup - log but don't fail
+                logger.warning(f"Failed to clean up lock file: {e}")
+            # Note: Other exceptions (KeyboardInterrupt, etc.) will propagate
 
 def create_environment(name: str, source: str = DEFAULT_ENV_NAME) -> None:
     """Create a new environment by copying from source environment or GitHub URL"""
