@@ -19,11 +19,14 @@ def test_init_command_calls_init_environments():
         mock_init.assert_called_once()
         assert "Initialized" in result.output
 
+
 def test_init_command_shows_error_if_already_initialized():
     """Test that init shows error if already initialized"""
     runner = CliRunner()
 
-    with patch("cenv.cli.init_environments", side_effect=InitializationError("already initialized")):
+    with patch(
+        "cenv.cli.init_environments", side_effect=InitializationError("already initialized")
+    ):
         result = runner.invoke(cli, ["init"])
 
         assert result.exit_code == 1

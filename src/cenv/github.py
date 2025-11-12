@@ -9,15 +9,16 @@ from cenv.config import get_config
 from cenv.exceptions import GitOperationError
 
 __all__ = [
-    'is_valid_github_url',
-    'clone_from_github',
-    'get_git_timeout',
+    "is_valid_github_url",
+    "clone_from_github",
+    "get_git_timeout",
 ]
 
 
 def get_git_timeout() -> int:
     """Get configured git timeout"""
     return get_config().git_timeout
+
 
 def is_valid_github_url(url: str) -> bool:
     """Validate if URL is a valid GitHub repository URL"""
@@ -27,6 +28,7 @@ def is_valid_github_url(url: str) -> bool:
     ]
 
     return any(re.match(pattern, url) for pattern in patterns)
+
 
 def clone_from_github(url: str, target: Path) -> None:
     """Clone a GitHub repository to target directory

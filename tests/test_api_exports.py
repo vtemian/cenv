@@ -1,4 +1,5 @@
 """Test that all modules define explicit public APIs"""
+
 import importlib
 import pkgutil
 from pathlib import Path

@@ -15,18 +15,22 @@ def test_is_valid_github_url_validates_https():
     assert is_valid_github_url("https://github.com/user/repo") is True
     assert is_valid_github_url("https://github.com/user/repo.git") is True
 
+
 def test_is_valid_github_url_validates_ssh():
     """Test GitHub URL validation for SSH"""
     assert is_valid_github_url("git@github.com:user/repo.git") is True
+
 
 def test_is_valid_github_url_rejects_invalid():
     """Test GitHub URL validation rejects invalid URLs"""
     assert is_valid_github_url("not-a-url") is False
     assert is_valid_github_url("https://gitlab.com/user/repo") is False
 
+
 @patch("subprocess.run")
 def test_clone_from_github_calls_git_clone(mock_run):
     """Test that clone_from_github calls git clone"""
+
     def simulate_git_clone(cmd, **kwargs):
         # Simulate git clone creating the temp directory
         # cmd format: ["git", "clone", "--depth", "1", url, temp_dir]
@@ -48,12 +52,14 @@ def test_clone_from_github_calls_git_clone(mock_run):
         assert "clone" in call_args[0][0]
         assert "https://github.com/user/repo" in call_args[0][0]
 
+
 def test_clone_from_github_raises_on_invalid_url():
     """Test that clone raises GitOperationError for invalid URL"""
     with tempfile.TemporaryDirectory() as tmpdir:
         target = Path(tmpdir) / "test-env"
         with pytest.raises(GitOperationError, match="Invalid GitHub URL"):
             clone_from_github("not-a-url", target)
+
 
 @patch("subprocess.run")
 def test_clone_from_github_raises_on_git_error(mock_run):
@@ -65,9 +71,11 @@ def test_clone_from_github_raises_on_git_error(mock_run):
         with pytest.raises(GitOperationError, match="clone"):
             clone_from_github("https://github.com/user/repo", target)
 
+
 @patch("subprocess.run")
 def test_clone_from_github_removes_git_directory(mock_run):
     """Test that clone removes .git directory after cloning"""
+
     def simulate_git_clone(cmd, **kwargs):
         # Simulate git clone creating the temp directory with .git
         # cmd format: ["git", "clone", "--depth", "1", url, temp_dir]
@@ -123,6 +131,7 @@ def test_clone_uses_shallow_clone(tmp_path):
 def test_clone_timeout_raises_error(tmp_path):
     """Test that timeout raises GitOperationError"""
     import subprocess
+
     target = tmp_path / "test-env"
 
     with patch("subprocess.run") as mock_run:

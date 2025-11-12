@@ -33,6 +33,7 @@ def initialized_envs(monkeypatch, tmp_path):
 
     return {"envs": envs_dir, "claude": claude_dir, "default": default_env}
 
+
 def test_create_environment_copies_from_default(initialized_envs):
     """Test creating environment copies from default"""
     create_environment("work")
@@ -43,12 +44,14 @@ def test_create_environment_copies_from_default(initialized_envs):
     assert (work_env / "settings.json").read_text() == '{"test": true}'
     assert (work_env / "agents" / "test.md").exists()
 
+
 def test_create_environment_raises_if_exists(initialized_envs):
     """Test that creating existing environment raises error"""
     create_environment("work")
 
     with pytest.raises(EnvironmentExistsError, match="already exists"):
         create_environment("work")
+
 
 def test_create_environment_raises_if_not_initialized(monkeypatch, tmp_path):
     """Test that create raises if not initialized"""
@@ -57,13 +60,16 @@ def test_create_environment_raises_if_not_initialized(monkeypatch, tmp_path):
     with pytest.raises(InitializationError, match="not initialized"):
         create_environment("work")
 
+
 def test_create_environment_raises_if_default_missing(initialized_envs):
     """Test that create raises if default environment doesn't exist"""
     import shutil
+
     shutil.rmtree(initialized_envs["envs"] / "default")
 
     with pytest.raises(EnvironmentNotFoundError, match="default"):
         create_environment("work")
+
 
 def test_create_environment_from_github_url(initialized_envs):
     """Test creating environment from GitHub repository"""
@@ -73,6 +79,7 @@ def test_create_environment_from_github_url(initialized_envs):
 
             work_env = initialized_envs["envs"] / "work"
             mock_clone.assert_called_once_with("https://github.com/user/repo", work_env)
+
 
 def test_create_environment_validates_github_url(initialized_envs):
     """Test that invalid GitHub URL raises error"""

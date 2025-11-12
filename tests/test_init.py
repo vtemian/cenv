@@ -22,11 +22,13 @@ def mock_dirs(monkeypatch, tmp_path):
 
     return {"claude": claude_dir, "envs": envs_dir}
 
+
 def test_init_creates_envs_directory(mock_dirs):
     """Test that init creates ~/.claude-envs directory"""
     init_environments()
     assert mock_dirs["envs"].exists()
     assert mock_dirs["envs"].is_dir()
+
 
 def test_init_moves_claude_to_default(mock_dirs):
     """Test that init moves ~/.claude to ~/.claude-envs/default"""
@@ -37,12 +39,14 @@ def test_init_moves_claude_to_default(mock_dirs):
     assert (default_env / "CLAUDE.md").exists()
     assert (default_env / "settings.json").exists()
 
+
 def test_init_creates_symlink_to_default(mock_dirs):
     """Test that init creates symlink ~/.claude -> default"""
     init_environments()
 
     assert mock_dirs["claude"].is_symlink()
     assert mock_dirs["claude"].resolve() == mock_dirs["envs"] / "default"
+
 
 def test_init_raises_if_already_initialized(mock_dirs):
     """Test that init raises error if already initialized"""
@@ -52,6 +56,7 @@ def test_init_raises_if_already_initialized(mock_dirs):
     with pytest.raises(InitializationError, match="already a symlink"):
         init_environments()
 
+
 def test_init_raises_if_claude_is_already_symlink(mock_dirs):
     """Test that init raises error if ~/.claude is already a symlink"""
     shutil.rmtree(mock_dirs["claude"])
@@ -59,6 +64,7 @@ def test_init_raises_if_claude_is_already_symlink(mock_dirs):
 
     with pytest.raises(InitializationError, match="already a symlink"):
         init_environments()
+
 
 def test_init_restores_backup_on_failure(mock_dirs):
     """Test that init restores original ~/.claude if operation fails"""
@@ -79,6 +85,7 @@ def test_init_restores_backup_on_failure(mock_dirs):
     # (depending on where the failure occurred)
     if mock_dirs["envs"].exists():
         assert not (mock_dirs["envs"] / "default").exists()
+
 
 def test_concurrent_init_only_one_succeeds(tmp_path, monkeypatch):
     """Test that concurrent initialization is safe"""
@@ -115,6 +122,12 @@ def test_concurrent_init_only_one_succeeds(tmp_path, monkeypatch):
     success_count = results.count("success")
     failed_count = results.count("failed")
 
-    assert success_count == 1, f"Expected exactly 1 success, got {success_count}. Results: {results}"
-    assert failed_count >= 3, f"Expected at least 3 failures (got {failed_count}). Results: {results}"
-    assert success_count + failed_count >= 4, f"Expected mostly successes and failures. Results: {results}"
+    assert (
+        success_count == 1
+    ), f"Expected exactly 1 success, got {success_count}. Results: {results}"
+    assert (
+        failed_count >= 3
+    ), f"Expected at least 3 failures (got {failed_count}). Results: {results}"
+    assert (
+        success_count + failed_count >= 4
+    ), f"Expected mostly successes and failures. Results: {results}"

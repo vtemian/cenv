@@ -1,16 +1,17 @@
 # ABOUTME: Configuration management for cenv
 # ABOUTME: Loads settings from environment variables and config files
 """Configuration management for cenv"""
+
 import os
 import threading
 from dataclasses import dataclass
 from pathlib import Path
 
 __all__ = [
-    'Config',
-    'load_config',
-    'get_config',
-    '_reset_config_for_testing',
+    "Config",
+    "load_config",
+    "get_config",
+    "_reset_config_for_testing",
 ]
 
 
@@ -69,20 +70,20 @@ def load_config(config_file: Path | None = None) -> Config:
             content = config_file.read_text()
             for line in content.splitlines():
                 line = line.strip()
-                if not line or line.startswith('#'):
+                if not line or line.startswith("#"):
                     continue
 
-                if '=' in line:
-                    key, value = line.split('=', 1)
+                if "=" in line:
+                    key, value = line.split("=", 1)
                     key = key.strip()
                     value = value.strip()
 
-                    if key == 'git_timeout':
+                    if key == "git_timeout":
                         try:
                             config.git_timeout = int(value)
                         except ValueError:
                             pass  # Use default
-                    elif key == 'log_level':
+                    elif key == "log_level":
                         config.log_level = value.upper()
         except (OSError, UnicodeDecodeError):
             # If config file is malformed or unreadable, use defaults
@@ -92,14 +93,14 @@ def load_config(config_file: Path | None = None) -> Config:
         # will propagate naturally
 
     # Environment variables override config file
-    if 'CENV_GIT_TIMEOUT' in os.environ:
+    if "CENV_GIT_TIMEOUT" in os.environ:
         try:
-            config.git_timeout = int(os.environ['CENV_GIT_TIMEOUT'])
+            config.git_timeout = int(os.environ["CENV_GIT_TIMEOUT"])
         except ValueError:
             pass  # Use default
 
-    if 'CENV_LOG_LEVEL' in os.environ:
-        config.log_level = os.environ['CENV_LOG_LEVEL'].upper()
+    if "CENV_LOG_LEVEL" in os.environ:
+        config.log_level = os.environ["CENV_LOG_LEVEL"].upper()
 
     return config
 

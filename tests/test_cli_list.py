@@ -23,6 +23,7 @@ def test_list_command_shows_all_environments():
             # Current environment should be marked
             assert "*" in result.output or "→" in result.output
 
+
 def test_list_command_shows_empty_message():
     """Test that list shows message when no environments exist"""
     runner = CliRunner()
@@ -32,6 +33,7 @@ def test_list_command_shows_empty_message():
 
         assert result.exit_code == 0
         assert "No environments" in result.output or "cenv init" in result.output
+
 
 def test_current_command_shows_active_environment():
     """Test that 'cenv current' shows active environment"""
@@ -43,6 +45,7 @@ def test_current_command_shows_active_environment():
         assert result.exit_code == 0
         assert "work" in result.output
 
+
 def test_current_command_shows_not_initialized():
     """Test that current shows message when not initialized"""
     runner = CliRunner()
@@ -52,6 +55,7 @@ def test_current_command_shows_not_initialized():
 
         assert result.exit_code == 0
         assert "not initialized" in result.output or "cenv init" in result.output
+
 
 def test_delete_command_removes_environment():
     """Test that 'cenv delete work' removes environment"""
@@ -65,6 +69,7 @@ def test_delete_command_removes_environment():
         mock_delete.assert_called_once_with("work")
         assert "Deleted" in result.output
 
+
 def test_delete_command_prompts_for_confirmation():
     """Test that delete prompts for confirmation"""
     runner = CliRunner()
@@ -77,6 +82,7 @@ def test_delete_command_prompts_for_confirmation():
         mock_delete.assert_not_called()
         assert "Cancelled" in result.output
 
+
 def test_delete_command_with_force_skips_prompt():
     """Test that --force flag skips confirmation"""
     runner = CliRunner()
@@ -86,6 +92,7 @@ def test_delete_command_with_force_skips_prompt():
 
         assert result.exit_code == 0
         mock_delete.assert_called_once_with("work")
+
 
 def test_delete_command_shows_error_if_not_exists():
     """Test that delete shows error if environment doesn't exist"""

@@ -1,4 +1,5 @@
 """Tests for LICENSE file."""
+
 from pathlib import Path
 
 
@@ -20,4 +21,4 @@ def test_license_file_content():
     assert "MIT License" in content, "LICENSE must be MIT License"
     assert "Copyright (c) 2025 cenv contributors" in content, "LICENSE must have correct copyright"
     assert "Permission is hereby granted" in content, "LICENSE must contain MIT license text"
-    assert "THE SOFTWARE IS PROVIDED \"AS IS\"" in content, "LICENSE must contain warranty disclaimer"
+    assert 'THE SOFTWARE IS PROVIDED "AS IS"' in content, "LICENSE must contain warranty disclaimer"

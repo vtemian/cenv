@@ -1,4 +1,3 @@
-
 import pytest
 
 from cenv.core import environment_exists, get_current_environment, list_environments
@@ -12,10 +11,12 @@ def mock_envs_dir(monkeypatch, tmp_path):
     monkeypatch.setattr("cenv.core.get_envs_dir", lambda: envs_dir)
     return envs_dir
 
+
 def test_list_environments_returns_empty_when_no_envs(mock_envs_dir):
     """Test listing environments when none exist"""
     result = list_environments()
     assert result == []
+
 
 def test_list_environments_returns_all_directories(mock_envs_dir):
     """Test listing returns all environment directories"""
@@ -26,6 +27,7 @@ def test_list_environments_returns_all_directories(mock_envs_dir):
     result = sorted(list_environments())
     assert result == ["default", "personal", "work"]
 
+
 def test_list_environments_ignores_files(mock_envs_dir):
     """Test that files are ignored, only directories counted"""
     (mock_envs_dir / "work").mkdir()
@@ -33,6 +35,7 @@ def test_list_environments_ignores_files(mock_envs_dir):
 
     result = list_environments()
     assert result == ["work"]
+
 
 def test_get_current_environment_when_symlink_exists(monkeypatch, tmp_path):
     """Test detecting current environment from symlink"""
@@ -50,6 +53,7 @@ def test_get_current_environment_when_symlink_exists(monkeypatch, tmp_path):
     result = get_current_environment()
     assert result == "work"
 
+
 def test_get_current_environment_returns_none_when_no_symlink(monkeypatch, tmp_path):
     """Test returns None when ~/.claude is not a symlink"""
     claude_dir = tmp_path / ".claude"
@@ -60,11 +64,13 @@ def test_get_current_environment_returns_none_when_no_symlink(monkeypatch, tmp_p
     result = get_current_environment()
     assert result is None
 
+
 def test_environment_exists_returns_true_when_exists(mock_envs_dir):
     """Test environment existence check"""
     (mock_envs_dir / "work").mkdir()
 
     assert environment_exists("work") is True
+
 
 def test_environment_exists_returns_false_when_not_exists(mock_envs_dir):
     """Test environment existence check for missing env"""

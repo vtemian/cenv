@@ -1,28 +1,30 @@
 # ABOUTME: Input validation for environment names and parameters
 # ABOUTME: Prevents path traversal and injection attacks
 """Input validation utilities for cenv"""
+
 import re
 
 from cenv.exceptions import CenvError
 
 __all__ = [
-    'validate_environment_name',
-    'InvalidEnvironmentNameError',
-    'VALID_NAME_PATTERN',
-    'RESERVED_NAMES',
+    "validate_environment_name",
+    "InvalidEnvironmentNameError",
+    "VALID_NAME_PATTERN",
+    "RESERVED_NAMES",
 ]
 
 
 class InvalidEnvironmentNameError(CenvError):
     """Raised when environment name is invalid"""
+
     pass
 
 
 # Valid environment name pattern: alphanumeric, hyphens, underscores
-VALID_NAME_PATTERN = re.compile(r'^[a-zA-Z0-9_-]+$')
+VALID_NAME_PATTERN = re.compile(r"^[a-zA-Z0-9_-]+$")
 
 # Reserved names that cannot be used
-RESERVED_NAMES = {'.', '..', '.trash', '.git', '.backup'}
+RESERVED_NAMES = {".", "..", ".trash", ".git", ".backup"}
 
 
 def validate_environment_name(name: str) -> None:
@@ -46,9 +48,7 @@ def validate_environment_name(name: str) -> None:
         Invalid: "../etc", "env with spaces", ".hidden", ".."
     """
     if not name:
-        raise InvalidEnvironmentNameError(
-            "Environment name cannot be empty"
-        )
+        raise InvalidEnvironmentNameError("Environment name cannot be empty")
 
     if name in RESERVED_NAMES:
         raise InvalidEnvironmentNameError(

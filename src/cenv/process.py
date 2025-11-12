@@ -26,8 +26,8 @@ import psutil
 from cenv.logging_config import get_logger
 
 __all__ = [
-    'is_claude_running',
-    'get_claude_processes',
+    "is_claude_running",
+    "get_claude_processes",
 ]
 
 logger = get_logger(__name__)

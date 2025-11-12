@@ -24,6 +24,7 @@ def isolated_home(monkeypatch, tmp_path):
 
     return home
 
+
 def test_full_workflow_init_create_use_delete(isolated_home):
     """Test complete workflow: init → create → use → delete"""
     runner = CliRunner()
@@ -69,6 +70,7 @@ def test_full_workflow_init_create_use_delete(isolated_home):
         result = runner.invoke(cli, ["delete", "work", "--force"])
         assert result.exit_code == 0
         assert not (isolated_home / ".claude-envs" / "work").exists()
+
 
 def test_error_handling_workflow(isolated_home):
     """Test error handling in various scenarios"""

@@ -79,4 +79,4 @@ def test_error_message_includes_pattern():
 
     error_msg = str(exc_info.value)
     # Should explain what's allowed
-    assert any(char in error_msg for char in ['a-z', '0-9', '-', '_'])
+    assert any(char in error_msg for char in ["a-z", "0-9", "-", "_"])

@@ -39,6 +39,7 @@ def multi_env_setup(monkeypatch, tmp_path):
 
     return {"envs": envs_dir, "claude": claude_dir}
 
+
 def test_delete_environment_removes_directory(multi_env_setup):
     """Test that deleting removes the environment directory"""
     delete_environment("work")
@@ -47,15 +48,18 @@ def test_delete_environment_removes_directory(multi_env_setup):
     assert (multi_env_setup["envs"] / "default").exists()
     assert (multi_env_setup["envs"] / "personal").exists()
 
+
 def test_delete_environment_raises_if_not_exists(multi_env_setup):
     """Test that deleting non-existent env raises error"""
     with pytest.raises(EnvironmentNotFoundError, match="does not exist"):
         delete_environment("nonexistent")
 
+
 def test_delete_environment_raises_if_currently_active(multi_env_setup):
     """Test that deleting active environment raises error"""
     with pytest.raises(ActiveEnvironmentError):
         delete_environment("default")
+
 
 def test_delete_environment_raises_if_default(multi_env_setup):
     """Test that deleting default environment raises error"""
@@ -63,10 +67,12 @@ def test_delete_environment_raises_if_default(multi_env_setup):
         with pytest.raises(ProtectedEnvironmentError):
             delete_environment("default")
 
+
 def test_get_trash_dir_returns_correct_path():
     """Test that trash directory is ~/.claude-envs/.trash"""
     result = get_trash_dir()
     assert result == Path.home() / ".claude-envs" / ".trash"
+
 
 def test_delete_creates_backup_in_trash(tmp_path, monkeypatch):
     """Test that delete creates timestamped backup in trash"""
@@ -87,6 +93,7 @@ def test_delete_creates_backup_in_trash(tmp_path, monkeypatch):
     assert len(backups) == 1
     assert backups[0].name.startswith("test-env-")
 
+
 def test_list_trash_returns_backups(tmp_path, monkeypatch):
     """Test listing trash backups"""
     monkeypatch.setattr("cenv.core.Path.home", lambda: tmp_path)
@@ -99,6 +106,7 @@ def test_list_trash_returns_backups(tmp_path, monkeypatch):
     assert len(backups) == 1
     assert backups[0]["name"] == "test-env"
     assert "timestamp" in backups[0]
+
 
 def test_restore_from_trash(tmp_path, monkeypatch):
     """Test restoring environment from trash"""

@@ -28,6 +28,7 @@ def multi_env_setup(monkeypatch, tmp_path):
 
     return {"envs": envs_dir, "claude": claude_dir}
 
+
 def test_switch_environment_updates_symlink(multi_env_setup):
     """Test that switching updates ~/.claude symlink"""
     with patch("cenv.core.is_claude_running", return_value=False):
@@ -35,11 +36,13 @@ def test_switch_environment_updates_symlink(multi_env_setup):
 
     assert multi_env_setup["claude"].resolve() == multi_env_setup["envs"] / "work"
 
+
 def test_switch_environment_raises_if_not_exists(multi_env_setup):
     """Test that switching to non-existent env raises error"""
     with patch("cenv.core.is_claude_running", return_value=False):
         with pytest.raises(EnvironmentNotFoundError, match="does not exist"):
             switch_environment("nonexistent", force=True)
+
 
 def test_switch_environment_raises_if_claude_running_without_force(multi_env_setup):
     """Test that switching raises if Claude running and force=False"""
@@ -47,12 +50,14 @@ def test_switch_environment_raises_if_claude_running_without_force(multi_env_set
         with pytest.raises(ClaudeRunningError, match="Claude"):
             switch_environment("work", force=False)
 
+
 def test_switch_environment_succeeds_if_claude_running_with_force(multi_env_setup):
     """Test that switching works if Claude running but force=True"""
     with patch("cenv.core.is_claude_running", return_value=True):
         switch_environment("work", force=True)
 
     assert multi_env_setup["claude"].resolve() == multi_env_setup["envs"] / "work"
+
 
 def test_switch_environment_removes_existing_symlink(multi_env_setup):
     """Test that switching removes old symlink correctly"""
@@ -89,6 +94,7 @@ def test_switch_is_atomic(tmp_path, monkeypatch):
                 states.append(("broken", "missing"))
             # Small sleep to catch any intermediate state
             import time
+
             time.sleep(0.001)
 
     # Start monitoring in background
@@ -125,10 +131,7 @@ def test_switch_handles_concurrent_operations(tmp_path, monkeypatch):
             errors.append(e)
 
     # Launch concurrent switches
-    threads = [
-        threading.Thread(target=switch_env, args=(f"env{i}",))
-        for i in range(3)
-    ]
+    threads = [threading.Thread(target=switch_env, args=(f"env{i}",)) for i in range(3)]
 
     for t in threads:
         t.start()

@@ -1,15 +1,16 @@
 # ABOUTME: Logging configuration for cenv
 # ABOUTME: Provides centralized logging setup with file and console handlers
 """Logging configuration for cenv"""
+
 import logging
 import sys
 import threading
 from pathlib import Path
 
 __all__ = [
-    'setup_logging',
-    'get_logger',
-    'reset_logging_config',
+    "setup_logging",
+    "get_logger",
+    "reset_logging_config",
 ]
 
 
@@ -49,9 +50,7 @@ def setup_logging(
         # Console handler
         console_handler = logging.StreamHandler(sys.stderr)
         console_handler.setLevel(level)
-        console_formatter = logging.Formatter(
-            "%(levelname)s: %(message)s"
-        )
+        console_formatter = logging.Formatter("%(levelname)s: %(message)s")
         console_handler.setFormatter(console_formatter)
         logger.addHandler(console_handler)
 

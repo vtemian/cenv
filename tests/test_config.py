@@ -81,9 +81,9 @@ def test_get_config_is_thread_safe():
         thread.join()
 
     # All threads should get the SAME instance (same id)
-    assert len(set(configs)) == 1, (
-        f"Expected singleton, got {len(set(configs))} different instances"
-    )
+    assert (
+        len(set(configs)) == 1
+    ), f"Expected singleton, got {len(set(configs))} different instances"
 
 
 def test_concurrent_config_loading():

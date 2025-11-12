@@ -1,13 +1,14 @@
 # ABOUTME: Platform compatibility detection and validation
 # ABOUTME: Ensures cenv runs only on supported platforms
 """Platform compatibility utilities for cenv"""
+
 import platform
 
 from cenv.exceptions import PlatformNotSupportedError
 
 __all__ = [
-    'check_platform_compatibility',
-    'PlatformNotSupportedError',
+    "check_platform_compatibility",
+    "PlatformNotSupportedError",
 ]
 
 
@@ -20,7 +21,7 @@ def check_platform_compatibility() -> None:
     system = platform.system()
 
     # Supported platforms: Unix-like systems with fcntl
-    supported = ['Linux', 'Darwin', 'FreeBSD', 'OpenBSD', 'SunOS']
+    supported = ["Linux", "Darwin", "FreeBSD", "OpenBSD", "SunOS"]
 
     if system not in supported:
         raise PlatformNotSupportedError(

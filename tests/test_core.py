@@ -10,15 +10,18 @@ def test_get_envs_dir_returns_correct_path():
     result = get_envs_dir()
     assert result == Path.home() / ".claude-envs"
 
+
 def test_get_env_path_returns_correct_path():
     """Test that environment path is ~/.claude-envs/<name>"""
     result = get_env_path("work")
     assert result == Path.home() / ".claude-envs" / "work"
 
+
 def test_get_claude_dir_returns_correct_path():
     """Test that claude dir is ~/.claude"""
     result = get_claude_dir()
     assert result == Path.home() / ".claude"
+
 
 def test_switch_environment_logs_error_on_failure(tmp_path, caplog, monkeypatch):
     """Test that switch_environment logs detailed error when cleanup is needed."""
@@ -51,7 +54,7 @@ def test_switch_environment_logs_error_on_failure(tmp_path, caplog, monkeypatch)
 
     # Capture logs
     with caplog.at_level(logging.ERROR):
-        with patch.object(Path, 'replace', failing_replace):
+        with patch.object(Path, "replace", failing_replace):
             with pytest.raises(OSError):
                 switch_environment("test")
 

@@ -20,7 +20,7 @@ from cenv.exceptions import CenvError, EnvironmentNotFoundError, InitializationE
 from cenv.logging_config import setup_logging
 from cenv.process import is_claude_running
 
-__all__ = ['cli']
+__all__ = ["cli"]
 
 
 def format_error_with_help(error: CenvError, context: str = "") -> str:
@@ -62,16 +62,8 @@ def format_error_with_help(error: CenvError, context: str = "") -> str:
 
 @click.group()
 @click.version_option()
-@click.option(
-    "--verbose", "-v",
-    is_flag=True,
-    help="Enable verbose logging"
-)
-@click.option(
-    "--log-file",
-    type=click.Path(path_type=Path),
-    help="Write logs to file"
-)
+@click.option("--verbose", "-v", is_flag=True, help="Enable verbose logging")
+@click.option("--log-file", type=click.Path(path_type=Path), help="Write logs to file")
 def cli(verbose: bool, log_file: Path) -> None:
     """cenv - Claude environment manager
 
@@ -79,6 +71,7 @@ def cli(verbose: bool, log_file: Path) -> None:
     """
     level = logging.DEBUG if verbose else logging.INFO
     setup_logging(level=level, log_file=log_file)
+
 
 @cli.command()
 def init() -> None:
@@ -89,8 +82,9 @@ def init() -> None:
         click.echo("  ~/.claude → ~/.claude-envs/default/")
         click.echo("\nUse 'cenv create <name>' to create new environments.")
     except CenvError as e:
-        click.echo(format_error_with_help(e, context='init'), err=True)
+        click.echo(format_error_with_help(e, context="init"), err=True)
         raise SystemExit(1)
+
 
 @cli.command()
 @click.argument("name")
@@ -110,8 +104,9 @@ def create(name: str, from_repo: str) -> None:
         else:
             click.echo(f"✓ Created environment '{name}' from {DEFAULT_ENV_NAME}")
     except CenvError as e:
-        click.echo(format_error_with_help(e, context='create'), err=True)
+        click.echo(format_error_with_help(e, context="create"), err=True)
         raise SystemExit(1)
+
 
 @cli.command()
 @click.argument("name")
@@ -130,8 +125,9 @@ def use(name: str, force: bool) -> None:
         switch_environment(name, force=force)
         click.echo(f"✓ Switched to environment '{name}'")
     except CenvError as e:
-        click.echo(format_error_with_help(e, context='use'), err=True)
+        click.echo(format_error_with_help(e, context="use"), err=True)
         raise SystemExit(1)
+
 
 @cli.command()
 def list() -> None:
@@ -149,6 +145,7 @@ def list() -> None:
         marker = " → " if env == current else "   "
         click.echo(f"{marker}{env}")
 
+
 @cli.command()
 def current() -> None:
     """Show the currently active environment"""
@@ -159,6 +156,7 @@ def current() -> None:
         click.echo("Run 'cenv init' to initialize.")
     else:
         click.echo(current_env)
+
 
 @cli.command()
 @click.argument("name")
@@ -176,8 +174,9 @@ def delete(name: str, force: bool) -> None:
         click.echo("  Use 'cenv trash' to list deleted environments")
         click.echo("  Use 'cenv restore <backup-name>' to restore")
     except CenvError as e:
-        click.echo(format_error_with_help(e, context='delete'), err=True)
+        click.echo(format_error_with_help(e, context="delete"), err=True)
         raise SystemExit(1)
+
 
 @cli.command()
 def trash() -> None:
@@ -195,6 +194,7 @@ def trash() -> None:
         click.echo(f"    Deleted: {backup['timestamp']}")
         click.echo()
 
+
 @cli.command()
 @click.argument("backup_name")
 def restore(backup_name: str) -> None:
@@ -203,5 +203,5 @@ def restore(backup_name: str) -> None:
         name = restore_from_trash(backup_name)
         click.echo(f"✓ Restored environment '{name}' from trash")
     except CenvError as e:
-        click.echo(format_error_with_help(e, context='restore'), err=True)
+        click.echo(format_error_with_help(e, context="restore"), err=True)
         raise SystemExit(1)

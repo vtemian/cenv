@@ -1,4 +1,3 @@
-
 import pytest
 from click.testing import CliRunner
 
@@ -70,6 +69,6 @@ def test_cli_rejects_malicious_input():
     ]
 
     for attack in malicious:
-        result = runner.invoke(cli, ['create', attack])
+        result = runner.invoke(cli, ["create", attack])
         assert result.exit_code != 0
         assert "Validation Error" in result.output or "Invalid" in result.output

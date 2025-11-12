@@ -1,4 +1,5 @@
 """Tests for CONTRIBUTING.md file."""
+
 from pathlib import Path
 
 

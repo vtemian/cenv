@@ -20,6 +20,7 @@ def test_use_command_switches_environment():
             mock_switch.assert_called_once_with("work", force=False)
             assert "Switched" in result.output
 
+
 def test_use_command_prompts_if_claude_running():
     """Test that use prompts for confirmation if Claude is running"""
     runner = CliRunner()
@@ -32,6 +33,7 @@ def test_use_command_prompts_if_claude_running():
             assert result.exit_code == 0
             mock_switch.assert_called_once_with("work", force=True)
             assert "Claude is running" in result.output
+
 
 def test_use_command_cancels_if_user_declines():
     """Test that use cancels if user declines confirmation"""
@@ -46,6 +48,7 @@ def test_use_command_cancels_if_user_declines():
             mock_switch.assert_not_called()
             assert "Cancelled" in result.output
 
+
 def test_use_command_with_force_flag_skips_prompt():
     """Test that --force flag skips confirmation prompt"""
     runner = CliRunner()
@@ -59,12 +62,15 @@ def test_use_command_with_force_flag_skips_prompt():
             # Should not prompt
             assert "Claude is running" not in result.output
 
+
 def test_use_command_shows_error_if_env_not_exists():
     """Test that use shows error if environment doesn't exist"""
     runner = CliRunner()
 
     with patch("cenv.cli.is_claude_running", return_value=False):
-        with patch("cenv.cli.switch_environment", side_effect=EnvironmentNotFoundError("nonexistent")):
+        with patch(
+            "cenv.cli.switch_environment", side_effect=EnvironmentNotFoundError("nonexistent")
+        ):
             result = runner.invoke(cli, ["use", "nonexistent"])
 
             assert result.exit_code == 1

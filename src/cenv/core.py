@@ -1,6 +1,7 @@
 # ABOUTME: Core functionality for cenv environment management
 # ABOUTME: Provides path utilities and environment operations
 """Core functionality for cenv"""
+
 import shutil
 import threading
 from pathlib import Path
@@ -38,31 +39,27 @@ INIT_LOCK_NAME = "cenv-init.lock"
 
 __all__ = [
     # Path utilities
-    'get_envs_dir',
-    'get_env_path',
-    'get_claude_dir',
-    'get_trash_dir',
-
+    "get_envs_dir",
+    "get_env_path",
+    "get_claude_dir",
+    "get_trash_dir",
     # Environment management
-    'list_environments',
-    'get_current_environment',
-    'environment_exists',
-
+    "list_environments",
+    "get_current_environment",
+    "environment_exists",
     # Operations
-    'init_environments',
-    'create_environment',
-    'switch_environment',
-    'delete_environment',
-
+    "init_environments",
+    "create_environment",
+    "switch_environment",
+    "delete_environment",
     # Trash management
-    'list_trash',
-    'restore_from_trash',
-
+    "list_trash",
+    "restore_from_trash",
     # Constants
-    'ENVS_DIR_NAME',
-    'CLAUDE_DIR_NAME',
-    'DEFAULT_ENV_NAME',
-    'TRASH_DIR_NAME',
+    "ENVS_DIR_NAME",
+    "CLAUDE_DIR_NAME",
+    "DEFAULT_ENV_NAME",
+    "TRASH_DIR_NAME",
 ]
 
 
@@ -70,17 +67,21 @@ def get_envs_dir() -> Path:
     """Get the base directory for all environments"""
     return Path.home() / ENVS_DIR_NAME
 
+
 def get_env_path(name: str) -> Path:
     """Get the path for a specific environment"""
     return get_envs_dir() / name
+
 
 def get_claude_dir() -> Path:
     """Get the ~/.claude directory path"""
     return Path.home() / CLAUDE_DIR_NAME
 
+
 def get_trash_dir() -> Path:
     """Get the trash directory for deleted environments"""
     return get_envs_dir() / TRASH_DIR_NAME
+
 
 def list_trash() -> list[dict[str, str]]:
     """List backups in trash
@@ -101,13 +102,16 @@ def list_trash() -> list[dict[str, str]]:
             if len(parts) == 3:
                 name = parts[0]
                 timestamp = f"{parts[1]}-{parts[2]}"
-                backups.append({
-                    "name": name,
-                    "backup_name": item.name,
-                    "timestamp": timestamp,
-                })
+                backups.append(
+                    {
+                        "name": name,
+                        "backup_name": item.name,
+                        "timestamp": timestamp,
+                    }
+                )
 
     return sorted(backups, key=lambda x: x["timestamp"], reverse=True)
+
 
 def restore_from_trash(backup_name: str) -> str:
     """Restore an environment from trash
@@ -145,6 +149,7 @@ def restore_from_trash(backup_name: str) -> str:
 
     return name
 
+
 def list_environments() -> list[str]:
     """List all available environments"""
     envs_dir = get_envs_dir()
@@ -153,10 +158,9 @@ def list_environments() -> list[str]:
         return []
 
     return [
-        item.name
-        for item in envs_dir.iterdir()
-        if item.is_dir() and item.name != TRASH_DIR_NAME
+        item.name for item in envs_dir.iterdir() if item.is_dir() and item.name != TRASH_DIR_NAME
     ]
+
 
 def get_current_environment() -> str | None:
     """Get the currently active environment name"""
@@ -173,9 +177,11 @@ def get_current_environment() -> str | None:
 
     return None
 
+
 def environment_exists(name: str) -> bool:
     """Check if an environment exists"""
     return get_env_path(name).exists()
+
 
 def init_environments() -> None:
     """Initialize cenv by migrating ~/.claude to ~/.claude-envs/default/"""
@@ -200,9 +206,7 @@ def init_environments() -> None:
         try:
             fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise InitializationError(
-                "Another cenv initialization is in progress. Please wait."
-            )
+            raise InitializationError("Another cenv initialization is in progress. Please wait.")
 
         # Check if ~/.claude is already a symlink
         if claude_dir.is_symlink():
@@ -218,6 +222,7 @@ def init_environments() -> None:
         backup_dir = None
         if claude_dir.exists() and not claude_dir.is_symlink():
             from datetime import datetime
+
             timestamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
             backup_dir = claude_dir.parent / f"{BACKUP_PREFIX}{timestamp}"
             logger.info(f"Creating backup at {backup_dir}")
@@ -265,7 +270,9 @@ def init_environments() -> None:
                     envs_dir.rmdir()
                 # Restore original .claude
                 shutil.move(str(backup_dir), str(claude_dir))
-            raise InitializationError(f"Initialization failed: {e}. Configuration restored from backup.")
+            raise InitializationError(
+                f"Initialization failed: {e}. Configuration restored from backup."
+            )
 
     finally:
         # Release lock and clean up
@@ -278,6 +285,7 @@ def init_environments() -> None:
                 # Best effort cleanup - log but don't fail
                 logger.warning(f"Failed to clean up lock file: {e}")
             # Note: Other exceptions (KeyboardInterrupt, etc.) will propagate
+
 
 def create_environment(name: str, source: str = DEFAULT_ENV_NAME) -> None:
     """Create a new environment by copying from source environment or GitHub URL"""
@@ -318,6 +326,7 @@ def create_environment(name: str, source: str = DEFAULT_ENV_NAME) -> None:
         shutil.copytree(source_env, target_env, symlinks=True)
 
     logger.info(f"Environment '{name}' created successfully")
+
 
 def switch_environment(name: str, force: bool = False) -> None:
     """Switch to a different environment using atomic rename
@@ -380,6 +389,7 @@ def switch_environment(name: str, force: bool = False) -> None:
                 temp_link.unlink()
             raise
 
+
 def delete_environment(name: str) -> None:
     """Delete an environment (moves to trash)"""
     # Validate environment name
@@ -410,6 +420,7 @@ def delete_environment(name: str) -> None:
 
     # Create timestamped backup name
     from datetime import datetime
+
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     backup_name = f"{name}-{timestamp}"
     backup_path = trash_dir / backup_name
