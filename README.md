@@ -1,4 +1,8 @@
-# cenv - Claude Environment Manager
+# claude-env
+
+**Switch between Claude Code configurations instantly.**
+
+---
 
 **You only get one `~/.claude` directory.**
 
@@ -10,7 +14,7 @@ Want to try a new plugin? Hope it doesn't break your workflow. Need different se
 
 ---
 
-## What is cenv?
+## What is claude-env?
 
 Think `pyenv`, but for Claude Code. Isolated environments you can switch between instantly.
 
@@ -23,7 +27,7 @@ cenv use experiment  # Try that new agent without fear
 Instant switching. Complete isolation. Zero copying. Just symlinks doing the heavy lifting.
 
 ```bash
-pip install claude-env
+uvx claude-env --help
 ```
 
 [![PyPI version](https://badge.fury.io/py/claude-env.svg)](https://badge.fury.io/py/claude-env)
@@ -49,47 +53,57 @@ pip install claude-env
 
 ## Installation
 
+**Recommended: Use uvx (no installation required)**
+
 ```bash
-# Install from PyPI (recommended)
+# Run directly with uvx - no installation needed
+uvx claude-env init
+uvx claude-env list
+uvx claude-env use work
+```
+
+**Alternative: Install with pip**
+
+```bash
 pip install claude-env
+cenv init
+```
 
-# Or using uvx (no installation required)
-uvx claude-env --help
+**For development:**
 
-# Or install from source with uv (for development)
+```bash
 git clone https://github.com/vtemian/claude-env.git
 cd claude-env
 uv pip install -e .
-
-# Or using pip
-pip install -e .
 ```
 
 ## Quick Start
 
 ```bash
 # One-time setup: migrate your existing ~/.claude
-cenv init
+uvx claude-env init
 
 # Create environments for different contexts
-cenv create work
-cenv create experiment
+uvx claude-env create work
+uvx claude-env create experiment
 
 # Switch between them instantly
-cenv use work        # → Now using work
-cenv use experiment  # → Now using experiment
+uvx claude-env use work        # → Now using work
+uvx claude-env use experiment  # → Now using experiment
 
 # See what you have
-cenv list
+uvx claude-env list
 #   default
 #   work
 # → experiment  (← indicates active)
 
 # Done experimenting? Clean up.
-cenv delete experiment
+uvx claude-env delete experiment
 ```
 
 That's it. Your environments are isolated, switching is instant, and you can't accidentally break your main setup.
+
+**Tip:** If you prefer shorter commands, install with pip and use `cenv` instead of `uvx claude-env`.
 
 ---
 
@@ -98,37 +112,37 @@ That's it. Your environments are isolated, switching is instant, and you can't a
 ### The Side Project Developer
 ```bash
 # Keep work and personal projects separate
-cenv create work
-cenv create personal
+uvx claude-env create work
+uvx claude-env create personal
 
 # Work projects use corporate standards
-cenv use work  # Strict guidelines, team plugins
+uvx claude-env use work  # Strict guidelines, team plugins
 
 # Side projects use your personal preferences
-cenv use personal  # Your style, your tools
+uvx claude-env use personal  # Your style, your tools
 ```
 
 ### The Plugin Experimenter
 ```bash
 # Want to try that new agent everyone's talking about?
-cenv create test-new-agent
-cenv use test-new-agent
+uvx claude-env create test-new-agent
+uvx claude-env use test-new-agent
 # Install plugin, test it out...
 # Not impressed?
-cenv use default
-cenv delete test-new-agent  # Moved to trash, just in case
+uvx claude-env use default
+uvx claude-env delete test-new-agent  # Moved to trash, just in case
 ```
 
 ### The Team Lead
 ```bash
 # Create and share your team's configuration
-cenv create team-setup
+uvx claude-env create team-setup
 # Configure settings, install plugins, write CLAUDE.md...
 # Push to GitHub
 
 # Team members onboard in seconds:
-cenv create team --from-repo https://github.com/company/claude-setup
-cenv use team
+uvx claude-env create team --from-repo https://github.com/company/claude-setup
+uvx claude-env use team
 # Done. Everyone has the same setup.
 ```
 
@@ -138,16 +152,18 @@ cenv use team
 
 | Command | What it does |
 |---------|--------------|
-| `cenv init` | One-time setup: migrates `~/.claude` to `~/.claude-envs/default/` |
-| `cenv create <name>` | Create new environment (copies from default) |
-| `cenv create <name> --from-repo <url>` | Create from GitHub repository |
-| `cenv use <name>` | Switch to environment (warns if Claude is running) |
-| `cenv use <name> --force` | Switch without warning |
-| `cenv list` | Show all environments (→ marks active) |
-| `cenv current` | Show active environment name |
-| `cenv delete <name>` | Move environment to trash |
-| `cenv trash` | List deleted environments |
-| `cenv restore <backup>` | Restore from trash |
+| `uvx claude-env init` | One-time setup: migrates `~/.claude` to `~/.claude-envs/default/` |
+| `uvx claude-env create <name>` | Create new environment (copies from default) |
+| `uvx claude-env create <name> --from-repo <url>` | Create from GitHub repository |
+| `uvx claude-env use <name>` | Switch to environment (warns if Claude is running) |
+| `uvx claude-env use <name> --force` | Switch without warning |
+| `uvx claude-env list` | Show all environments (→ marks active) |
+| `uvx claude-env current` | Show active environment name |
+| `uvx claude-env delete <name>` | Move environment to trash |
+| `uvx claude-env trash` | List deleted environments |
+| `uvx claude-env restore <backup>` | Restore from trash |
+
+**Note:** If installed with pip, replace `uvx claude-env` with `cenv` for shorter commands.
 
 ---
 
@@ -175,7 +191,7 @@ One symlink. Multiple worlds.
       └── ...
 ```
 
-When you run `cenv use work`, we atomically swap the symlink. Claude Code sees a different `~/.claude` directory instantly. No copying. No waiting. Just works.
+When you run `uvx claude-env use work`, we atomically swap the symlink. Claude Code sees a different `~/.claude` directory instantly. No copying. No waiting. Just works.
 
 ---
 
@@ -195,15 +211,15 @@ See [SECURITY.md](SECURITY.md) for the full story.
 
 **Trash & Restore** - Deleted environments go to trash with timestamps. Restore anytime.
 ```bash
-cenv delete experiment       # Moved to trash
-cenv trash                   # List backups
-cenv restore experiment-...  # Changed your mind
+uvx claude-env delete experiment       # Moved to trash
+uvx claude-env trash                   # List backups
+uvx claude-env restore experiment-...  # Changed your mind
 ```
 
 **Debug Logging** - When things go wrong (they won't, but just in case):
 ```bash
-cenv --verbose list              # Detailed output
-cenv --log-file ~/debug.log init # Log to file
+uvx claude-env --verbose list              # Detailed output
+uvx claude-env --log-file ~/debug.log init # Log to file
 ```
 
 **Custom Configuration** - Environment variables or `~/.cenvrc`:
@@ -238,10 +254,10 @@ make check    # Run all tests, type checking, linting
 
 Because managing one Claude configuration for everything is like having one Git branch for all your projects. It works, technically. But there's a better way.
 
-**Install cenv. Create isolated environments. Switch fearlessly.**
+**Install claude-env. Create isolated environments. Switch fearlessly.**
 
 ```bash
-pip install claude-env
+uvx claude-env init
 ```
 
 ## License
