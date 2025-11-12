@@ -225,11 +225,23 @@ cenv restore myenv-20251111-143022
 # Install with dev dependencies
 make install
 
-# Run tests
+# Run tests (fast)
 make test
 
-# Run type checking
+# Run tests with coverage
+make test-cov
+
+# Run type checking (strict)
 make typecheck
+
+# Run linting
+make lint
+
+# Auto-fix linting issues
+make format
+
+# Run all checks (lint + typecheck + test-cov)
+make check
 
 # Clean build artifacts
 make clean
